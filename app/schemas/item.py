@@ -1,5 +1,5 @@
+
 from sqlmodel import Field, SQLModel
-from typing import Optional
 
 
 class ItemBase(SQLModel):
