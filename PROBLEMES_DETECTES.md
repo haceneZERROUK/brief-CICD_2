@@ -1,7 +1,7 @@
-models/item.py 
+models/item.py
 nom du fichier
-import inutile 
-la fonction _legacy_method ne fait rien 
+import inutile
+la fonction _legacy_method ne fait rien
 
 routes/items.py
 
@@ -17,7 +17,7 @@ class itemcreate : vide et enfant de item base
 services/item_service.py
 docstrings trop longues
 
-il y aussi des variables d'environnement qui sont dans les fichiers 
+il y aussi des variables d'environnement qui sont dans les fichiers
 
 
 >>>>>>>>>>><  erreurs Ruff :
@@ -220,7 +220,7 @@ Un commit fix: → incrémente le PATCH ​
 
 Un commit feat: → incrémente le MINOR ​
 
-Un commit avec BREAKING CHANGE: → incrémente le MAJOR 
+Un commit avec BREAKING CHANGE: → incrémente le MAJOR
 
 Des outils comme semantic-release ou standard-version lisent l'historique Git, déterminent automatiquement le numéro de version et génèrent le CHANGELOG sans intervention humaine. Cela évite les erreurs manuelles, accélère les releases et garantit la traçabilité (chaque version documente précisément ce qui a changé)
 
