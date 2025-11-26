@@ -1,4 +1,8 @@
 from sqlmodel import Field, SQLModel
+<<<<<<< HEAD
+=======
+
+>>>>>>> fix/format-code
 
 class Item(SQLModel, table=True):
     __tablename__ = "items"

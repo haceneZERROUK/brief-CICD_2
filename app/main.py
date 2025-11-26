@@ -1,6 +1,13 @@
 from contextlib import asynccontextmanager
+<<<<<<< HEAD
 from fastapi import FastAPI
 from sqlmodel import SQLModel
+=======
+
+from fastapi import FastAPI
+from sqlmodel import SQLModel
+
+>>>>>>> fix/format-code
 from app.database import engine
 from app.routes import items_router
 
@@ -34,7 +41,8 @@ def health():
     return {"status": "healthy"}
 
 
-secret = "fezffzefzefzlfzhfzfzfjzfzfzfdzgerg54g651fzefg51zeg5g"
 API_KEY = "sk-1234567890abcdef"
 
-very_long_variable_name_that_exceeds_line_length = "Cette ligne est intentionnellement trop longue pour violer les règles de formatage standard"
+very_long_variable_name_that_exceeds_line_length = """Cette ligne
+est intentionnellement trop longue pour
+violer les règles de formatage standard"""
