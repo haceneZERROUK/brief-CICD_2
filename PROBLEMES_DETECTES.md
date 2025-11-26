@@ -200,3 +200,33 @@ Non le seul code qui est bien alimenté est item_services.py
 
 3. **Comment empêcher ces problèmes à l'avenir ?**
 signaler les erreurs au départ dès le commit afin de corriger les erreurs le plus tot possible.
+
+
+### ❓ Questions de réflexion
+
+1. **Pourquoi protéger les branches ?**
+   - Que se passerait-il sans protection ?
+   Sans les protections de branches, tous les membres du projet pourraient push dans la branche main et la develop. Sans que d'autres personnes puissent vérifier et ça aurait été push avec des erreurs potentiels. Ce qui peut mettre en péril le projet
+
+2. **Pourquoi Conventional Commits ?**
+   - Avantages pour l'équipe
+ça rend plus lisible les commits et permet une standardisation qui permet de classer rapidement les commits
+
+   - Avantages pour le versionnage automatique
+
+Les Conventional Commits permettent le versionnage sémantique automatique (SemVer) :
+
+Un commit fix: → incrémente le PATCH ​
+
+Un commit feat: → incrémente le MINOR ​
+
+Un commit avec BREAKING CHANGE: → incrémente le MAJOR 
+
+Des outils comme semantic-release ou standard-version lisent l'historique Git, déterminent automatiquement le numéro de version et génèrent le CHANGELOG sans intervention humaine. Cela évite les erreurs manuelles, accélère les releases et garantit la traçabilité (chaque version documente précisément ce qui a changé)
+
+
+3. **Différence entre develop et main ?**
+   - Quand merger dans develop ?
+Dès qu'une feature branch est terminée et testée (feature/login vers develop).
+   - Quand merger dans main ?
+Quand merger ? Dès qu'une feature branch est terminée et testée (feature/login vers develop).
