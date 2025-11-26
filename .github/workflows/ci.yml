@@ -1,0 +1,88 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Installer uv
+        uses: astral-sh/setup-uv@v3
+      
+      - name: Installer les dépendances
+        run: uv sync
+      
+      - name: Exécuter ruff check
+        run: uv run ruff check .
+      
+      - name: Vérifier le formatage
+        run: uv run ruff format --check .
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Installer uv
+        uses: astral-sh/setup-uv@v3
+      
+      - name: Installer les dépendances
+        run: uv sync
+      
+      - name: Exécuter mypy
+        run: uv run mypy app/
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Installer uv
+        uses: astral-sh/setup-uv@v3
+      
+      - name: Installer les dépendances
+        run: uv sync
+      
+      - name: Exécuter Bandit
+        run: uv run bandit -r app/
+      
+      - name: Vérifier les vulnérabilités
+        run: uv run safety check
+
+  tests:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: items_db
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Installer uv
+        uses: astral-sh/setup-uv@v3
+      
+      - name: Installer les dépendances
+        run: uv sync
+      
+      - name: Exécuter les tests avec couverture
+        run: uv run pytest --cov=app --cov-report=term --cov-report=xml
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/items_db
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+
