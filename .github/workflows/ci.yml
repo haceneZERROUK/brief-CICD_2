@@ -12,7 +12,7 @@ jobs:
         uses: astral-sh/setup-uv@v3
       
       - name: Installer les dépendances
-        run: uv sync --dev
+        run: uv sync
       
       - name: Exécuter ruff check
         run: uv run ruff check .
@@ -29,7 +29,7 @@ jobs:
         uses: astral-sh/setup-uv@v3
       
       - name: Installer les dépendances
-        run: uv sync --dev
+        run: uv sync
       
       - name: Exécuter mypy
         run: uv run mypy app/
@@ -43,7 +43,7 @@ jobs:
         uses: astral-sh/setup-uv@v3
       
       - name: Installer les dépendances
-        run: uv sync --dev
+        run: uv sync
       
       - name: Exécuter Bandit
         run: uv run bandit -r app/
@@ -76,7 +76,7 @@ jobs:
         uses: astral-sh/setup-uv@v3
       
       - name: Installer les dépendances
-        run: uv sync --dev
+        run: uv sync 
       
       - name: Exécuter les tests avec couverture
         run: uv run pytest --cov=app --cov-report=term --cov-report=xml
