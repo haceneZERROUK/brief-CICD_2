@@ -4,7 +4,7 @@ import sys
 from fastapi import FastAPI
 from sqlmodel import SQLModel
 import json
-from typing import Dict, Any
+from typing import Dict, Any,AsyncGenerator
 from app.database import engine
 from app.routes import items_router
 
@@ -13,7 +13,7 @@ UNUSED_VAR = "cette variable n'est jamais utilisée"
 
 
 @asynccontextmanager
-async def lifespan(fastapi_app: FastAPI):
+async def lifespan(fastapi_app: FastAPI) -> AsyncGenerator[None]:
     SQLModel.metadata.create_all(engine)
     yield
 
@@ -29,12 +29,12 @@ app.include_router(items_router)
 
 
 @app.get("/")
-def root():
+def root() -> dict:
     return {"message": "Items CRUD API"}
 
 
 @app.get("/health")
-def health():
+def health() -> dict:
     return {"status": "healthy"}
 
 

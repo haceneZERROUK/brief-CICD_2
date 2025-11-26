@@ -17,3 +17,7 @@ dependencies = [
 dev = [
     "diagrams>=0.24.4",
 ]
+
+[tool.mypy]
+python_version = "3.12"
+disallow_untyped_defs = true 
