@@ -64,11 +64,6 @@ build_command = ""
 match = "main"
 prerelease = false
 
-[tool.semantic_release.branches.develop]
-match = "develop"
-prerelease = true
-prerelease_token = "rc"
-
 [tool.semantic_release.changelog.default_templates]
 changelog_file = "CHANGELOG.md"
 
