@@ -278,3 +278,93 @@ Si ça passe localement, c'est que ton environnement local est aligné avec le C
 - **Moins de conflits :** Petites PR = mergées vite = moins de risque de conflits Git avec les autres devs.[7]
 
 **La règle d'or :** Une PR = une branche = un problème corrigé. C'est pour ça que tu as créé des branches séparées (`fix/remove-unused-imports`, `fix/add-type-annotations`, etc.).
+
+Voici les réponses structurées pour ton cours sur pre-commit vs CI :
+
+## Différence entre pre-commit et CI ?
+
+### Quand chacun s'exécute ?
+
+**Pre-commit :**
+- S'exécute **localement sur ta machine** au moment où tu tapes `git commit`
+- Bloque le commit **avant** qu'il n'entre dans l'historique Git
+- C'est le premier filet de sécurité, côté développeur
+
+**CI (Continuous Integration) :**
+- S'exécute **sur les serveurs GitHub Actions** après que tu aies push ton code
+- Vérifie le code **après** qu'il soit entré dans l'historique et partagé
+- C'est le second filet de sécurité, côté équipe
+
+### Pourquoi avoir les deux ?
+
+**Defense in Depth (défense en profondeur) :**
+- **Pre-commit = feedback instantané (5-10 sec)** : Tu corriges immédiatement sans polluer l'historique Git avec des commits "fix typo" ou "oops forgot lint"
+- **CI = vérification ultime (2-5 min)** : Garantit que même si quelqu'un bypass pre-commit, le code ne sera jamais mergé sans validation
+
+**Protection contre le bypass :**
+- Un développeur peut désactiver pre-commit localement, mais **il ne peut pas désactiver la CI sur GitHub**
+- La CI est la vraie barrière avant le merge en production
+
+## Peut-on bypass pre-commit ?
+
+### `git commit --no-verify`
+
+**Oui, c'est possible :**
+```bash
+git commit --no-verify -m "urgent fix"
+# ou
+git commit -n -m "bypass pre-commit"
+```
+
+### Est-ce une bonne idée ?
+
+**Presque jamais.** Les seuls cas légitimes :
+- Emergency hotfix en prod (incendie en cours)
+- Pre-commit hook cassé temporairement (bug dans l'outil)
+- Commit de fichiers générés automatiquement (ex: lockfiles)
+
+**Mauvaises raisons (trop fréquentes) :**
+- "Je suis pressé" → Tu perds plus de temps à attendre la CI échouer
+- "Je corrigerai plus tard" → Tu ne corrigeras jamais
+- "C'est juste un petit truc" → C'est toujours un "petit truc" qui casse la prod
+
+### Comment l'empêcher ?
+
+**Au niveau technique :**
+- **Branch protection rules sur GitHub** : Impose que la CI passe avant merge, même si pre-commit a été bypass
+- **CODEOWNERS + required reviews** : Force une revue humaine qui vérifie que le code respecte les standards
+
+**Au niveau culturel :**
+- Éduquer l'équipe : montrer que pre-commit fait gagner du temps, pas en perdre
+- Lead by example : si les seniors bypass systématiquement, les juniors feront pareil
+
+## Pre-commit ralentit-il le développement ?
+
+### Temps d'exécution (5-10 secondes)
+
+**C'est négligeable comparé aux alternatives :**
+
+| Scénario | Sans pre-commit | Avec pre-commit |
+|:---------|:----------------|:----------------|
+| Commit local | 0.5 sec | 5-10 sec |
+| Push + attente CI | 0 sec (tu push et tu zappes) | 0 sec (déjà validé) |
+| CI échoue, tu découvres l'erreur | +3 min (CI) + 2 min (fix) + 3 min (re-CI) = **8 min** | **0 min** (erreur évitée) |
+| Code review demande des changements de formatage | +1 jour (aller-retour reviewer) | **0 min** (auto-fixé) |
+
+**Bilan :**
+- Pre-commit ajoute 5-10 sec par commit
+- Mais économise 8+ minutes à chaque fois qu'il détecte une erreur **avant** la CI
+- Sur une journée avec 10 commits dont 2 auraient échoué en CI : **gain net de ~15 minutes**
+
+### Vs temps perdu à attendre la CI
+
+**Pre-commit = feedback loop court :**
+- Tu commites → 10 sec → erreur trouvée → tu fixes → re-commit
+- Total : **30 secondes** pour détecter + corriger
+
+**Sans pre-commit :**
+- Tu commites → tu push → 3 min de CI → erreur trouvée → tu fixes → tu push → 3 min de re-CI
+- Total : **6+ minutes** pour le même résultat
+
+**Conclusion pour ton cours :**
+Pre-commit ne ralentit pas le développement, il **accélère la boucle de feedback** et réduit le coût cognitif (tu restes dans le même contexte mental au lieu de revenir 5 minutes plus tard sur un problème).
