@@ -368,3 +368,38 @@ git commit -n -m "bypass pre-commit"
 
 **Conclusion pour ton cours :**
 Pre-commit ne ralentit pas le développement, il **accélère la boucle de feedback** et réduit le coût cognitif (tu restes dans le même contexte mental au lieu de revenir 5 minutes plus tard sur un problème).
+
+
+## Pourquoi containeriser ?
+
+**Cohérence entre environnements** : Élimine le problème "ça marche sur ma machine" en empaquetant l'application avec toutes ses dépendances. Même comportement en développement, test et production.
+
+**Portabilité totale** : Un conteneur fonctionne partout sans modification, que ce soit sur votre laptop, un serveur on-premise ou différents clouds. Vous pouvez changer de fournisseur cloud facilement.
+
+**Déploiement rapide** : Les conteneurs démarrent en secondes contre plusieurs minutes pour les VM. Permet des mises à jour et rollbacks quasi-instantanés.
+
+**Optimisation des ressources** : Plus légers que les VM car ils partagent le noyau de l'OS hôte. Vous pouvez lancer 2 à 3 fois plus de conteneurs que de VM sur le même hardware.
+
+**Isolation des applications** : Chaque conteneur est indépendant. Une erreur dans un conteneur n'affecte pas les autres. Vous pouvez faire tourner des versions incompatibles de logiciels sur la même machine.
+
+## Multi-stage build : pourquoi ?
+
+**Taille de l'image** : Réduit la taille de 40 à 60%. Les outils de compilation comme gcc, npm ou Maven ne sont présents que pendant le build, pas dans l'image finale. Résultat : téléchargements plus rapides, moins d'espace disque.
+
+**Sécurité** : Surface d'attaque réduite. En ne gardant que le strict nécessaire à l'exécution, vous éliminez les outils de développement qui pourraient contenir des vulnérabilités. Moins de packages = moins de failles potentielles.
+
+## Tagging strategy
+
+**Pourquoi plusieurs tags ?**
+
+Flexibilité : Permet de cibler précisément la version souhaitée selon le contexte (dev, staging, production). Offre différents niveaux de stabilité.
+
+Traçabilité : Retrouver l'image exacte d'un commit ou d'une version. Facilite les audits et le debugging.
+
+Rollback : Revenir rapidement à une version spécifique en cas de problème.
+
+**latest** : Pointe toujours vers le dernier build. Pratique pour le développement mais dangereux en production car non-déterministe. On ne sait jamais quelle version exacte on va obtenir.
+
+**semver (v1.2.3)** : Versioning sémantique strict. Idéal pour la production car il garantit une version figée et prévisible. Permet de gérer les montées de version mineures vs majeures.
+
+**sha (sha-abc1234)** : Lié directement au commit Git. Traçabilité parfaite et reproductibilité garantie. Utile pour les audits de sécurité et les déploiements critiques où il faut savoir exactement quel code tourne.
