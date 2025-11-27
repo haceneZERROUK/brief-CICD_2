@@ -23,7 +23,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -37,11 +37,11 @@ jobs:
         id: release
         uses: python-semantic-release/python-semantic-release@v9.15.1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.release_token }}
 
       - name: Publish to GHCR (if new release)
         if: steps.release.outputs.released == 'true'
         run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          echo ${{ secrets.release_token }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           docker tag items-api:local ghcr.io/${{ github.repository }}:${{ steps.release.outputs.tag }}
           docker push ghcr.io/${{ github.repository }}:${{ steps.release.outputs.tag }}
