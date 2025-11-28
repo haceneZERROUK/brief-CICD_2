@@ -18,14 +18,16 @@ permissions:
 
 jobs:
   release:
+    # Ne s'exécute que si la CI a réussi
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4  # v6 n'existe pas encore, v4 est la stable
         with:
           fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_branch }} # CRUCIAL pour workflow_run
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v4
@@ -44,16 +46,14 @@ jobs:
         env:
           CR_PAT: ${{ secrets.release_token }}
         run: |
-          IMAGE_ID=ghcr.io/${{ github.repository }}
-          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          # Conversion du nom du repo en minuscules (haceneZERROUK -> hacenezerrouk)
+          IMAGE_ID=ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           VERSION=${{ steps.release.outputs.tag }}
 
           echo "$CR_PAT" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
+          # On rebuilde l'image car on est sur un nouveau runner
           docker build -t items-api:local .
 
           docker tag items-api:local $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
-
-          docker tag items-api:local $IMAGE_ID:latest
-          docker push $IMAGE_ID:latest
