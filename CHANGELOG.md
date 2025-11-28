@@ -1,6 +1,17 @@
 # CHANGELOG
 
 
+## v0.1.0-rc.2 (2025-11-28)
+
+### Bug Fixes
+
+- Reglement de allow à exempt
+  ([`e373baa`](https://github.com/haceneZERROUK/brief-CICD_2/commit/e373baabc60402fe657caa4a00dc14f4ed0374d0))
+
+- Test
+  ([`050493c`](https://github.com/haceneZERROUK/brief-CICD_2/commit/050493cb84c45254476c7de831f3a3119c4b709c))
+
+
 ## v0.1.0-rc.1 (2025-11-28)
 
 ### Bug Fixes
