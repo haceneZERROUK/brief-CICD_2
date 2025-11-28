@@ -18,16 +18,16 @@ permissions:
 
 jobs:
   release:
-    # Ne s'exécute que si la CI a réussi
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4  # v6 n'existe pas encore, v4 est la stable
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.event.workflow_run.head_branch }} # CRUCIAL pour workflow_run
+          ref: ${{ github.event.workflow_run.head_branch }}
+          persist-credentials: false # <--- LE TRUC DU CAMARADE (1/2)
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v4
@@ -35,25 +35,37 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
+      # Configuration EXPLICITE du token pour Git (Méthode Camarade 2/2)
+      # On utilise votre secret 'release_token' (votre PAT)
+      - name: Configure Git Auth
+        run: |
+          git config --global user.name "haceneZERROUK"
+          git config --global user.email "votre_email@example.com" # Remplacez par votre email
+          git remote set-url origin https://haceneZERROUK:${{ secrets.release_token }}@github.com/${{ github.repository }}.git
+
       - name: Python Semantic Release
         id: release
         uses: python-semantic-release/python-semantic-release@v9.15.1
         with:
           github_token: ${{ secrets.release_token }}
+          # Note: Comme on a configuré le remote git manuellement au dessus,
+          # PSR utilisera bien ce remote authentifié pour ses pushes.
 
       - name: Publish to GHCR (if new release)
         if: steps.release.outputs.released == 'true'
         env:
           CR_PAT: ${{ secrets.release_token }}
         run: |
-          # Conversion du nom du repo en minuscules (haceneZERROUK -> hacenezerrouk)
+          # Conversion minuscules (Toujours là !)
           IMAGE_ID=ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           VERSION=${{ steps.release.outputs.tag }}
 
           echo "$CR_PAT" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-          # On rebuilde l'image car on est sur un nouveau runner
           docker build -t items-api:local .
 
           docker tag items-api:local $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
+
+          docker tag items-api:local $IMAGE_ID:latest
+          docker push $IMAGE_ID:latest
