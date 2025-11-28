@@ -1127,7 +1127,9 @@ CMD ["fastapi", "run", "app/main.py", "--port", "8000"]
 docker build -t items-api:local .
 
 # Run
-docker run -p 8000:8000 items-api:local
+docker run -p 8000:8000 \
+  -e DATABASE_URL="postgresql://<username>:<psword>@host.docker.internal:5432/<db>" \
+  items-api:local
 
 # Test
 curl http://localhost:8000/health
@@ -1162,17 +1164,17 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: 
+        uses:
 
       - name: Log in to GitHub Container Registry
-        uses: 
+        uses:
 
       - name: Extract metadata
         id: meta
-        uses: 
+        uses:
 
       - name: Build and push Docker image
-        uses: 
+        uses:
 
 ```
 
@@ -1190,16 +1192,16 @@ Après le workflow :
 2. Vous devriez voir `items-ci-cd` (ou votre nom de repo)
 3. L'image est tagguée avec la branche et le SHA
 
-URL de l'image : `ghcr.io/<votre-username>/items-ci-cd:main`
+URL de l'image : `ghcr.io/<haceneZERROUK>/items-ci-cd:main`
 
 #### 5.5 Utiliser l'image
 
 ```bash
 # Pull depuis GHCR
-docker pull ghcr.io/<votre-username>/items-ci-cd:main
+docker pull ghcr.io/haceneZERROUK/items-ci-cd:main
 
 # Run
-docker run -p 8000:8000 ghcr.io/<votre-username>/items-ci-cd:main
+docker run -p 8000:8000 ghcr.io/haceneZERROUK/items-ci-cd:main
 ```
 
 ### ❓ Questions de réflexion
@@ -1333,20 +1335,20 @@ jobs:
 
 
       - name: Set up uv
-        uses: 
+        uses:
 
       - name: Install dependencies
-        run: 
+        run:
 
       - name: Python Semantic Release
         id: release
-        uses: 
+        uses:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to GHCR (if new release)
         if:steps.release.outputs.released == 'true'
-        run: 
+        run:
 ```
 
 **Ce workflow** :
@@ -1760,14 +1762,14 @@ jobs:
 
       - name: Get release version
         id: version
-        run: 
+        run:
 
       - name: Deploy to Azure Container Apps
-        run: 
+        run:
 
 
       - name: Health Check
-        run: 
+        run:
 
       - name: Rollback on failure
         if: failure()
