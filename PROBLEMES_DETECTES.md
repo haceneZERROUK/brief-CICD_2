@@ -403,3 +403,5 @@ Rollback : Revenir rapidement à une version spécifique en cas de problème.
 **semver (v1.2.3)** : Versioning sémantique strict. Idéal pour la production car il garantit une version figée et prévisible. Permet de gérer les montées de version mineures vs majeures.
 
 **sha (sha-abc1234)** : Lié directement au commit Git. Traçabilité parfaite et reproductibilité garantie. Utile pour les audits de sécurité et les déploiements critiques où il faut savoir exactement quel code tourne.
+
+test test
